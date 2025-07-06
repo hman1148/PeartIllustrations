@@ -6,15 +6,12 @@ import models.UserRequestResponse.UserCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import services.UserService;
 
 @Controller
 @RequestMapping("/api/users")
 public class UserController {
-
     @Autowired
     private final UserService userService;
 
@@ -28,8 +25,25 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ItemResponse<>(null, "Invalid user data", false));
         }
 
-        // Create a new user and hash password
+        try {
+            User user = userService.createUser(createRequest);
+            return ResponseEntity.ok(new ItemResponse<>(user, "User created successfully", true));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ItemResponse<>(null, "Error creating user: " + e.getMessage(), false));
+        }
+    }
 
+    @PutMapping("{id}")
+    public ResponseEntity<ItemResponse<User>> updateUser(@PathVariable Long id, @RequestBody User updateRequest) {
+        if (updateRequest == null) {
+            return ResponseEntity.badRequest().body(new ItemResponse<>(null, "Invalid user data", false));
+        }
 
+        try {
+            User updatedUser = userService.updateUser(updateRequest);
+            return ResponseEntity.ok(new ItemResponse<>(updatedUser, "User updated successfully", true));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ItemResponse<>(null, "Error updating user: " + e.getMessage(), false));
+        }
     }
 }

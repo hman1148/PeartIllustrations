@@ -18,8 +18,6 @@ public class User {
     private String email;
     private String role;
     private boolean isEmailSubscriptionsActive;
-
-    // Payments
     private String stripeCustomerId;
 
     @OneToMany
@@ -28,12 +26,14 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShoppingCart> shoppingCart;
 
-    public User(Long id, String username, String password, String email, String role, boolean isEmailSubscriptionsActive) {
+    public User(Long id, String username, String password, String email,
+                String stripeCustomerId, String role, boolean isEmailSubscriptionsActive) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+        this.stripeCustomerId = stripeCustomerId;
         this.isEmailSubscriptionsActive = isEmailSubscriptionsActive;
         this.orderHistory = new ArrayList<>();
         this.shoppingCart = new ArrayList<>();

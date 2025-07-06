@@ -2,6 +2,7 @@ package services;
 
 import UserRepository.UserRepository;
 import models.User.User;
+import models.UserRequestResponse.UserCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,22 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(User user) {
+    public User createUser(UserCreateRequest user) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
-        return this.userRepository.save(user);
+
+        User newUser = new User(
+                null,
+                user.getUsername(),
+                hashedPassword,
+                user.getEmail(),
+                user.getRole(), // Assuming roles are handled separately
+                user.getStripeCustomerId(),
+                true
+        );
+
+        return this.userRepository.save(newUser);
     }
 
     public Optional<User> findById(Long id) {
@@ -37,6 +49,18 @@ public class UserService {
 
     // Update user details
     public User updateUser(User user) {
+        User existingUser = this.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existingUser.setUsername(user.getUsername());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setEmailSubscriptionsActive(user.isEmailSubscriptionsActive());
+        existingUser.setOrderHistory(user.getOrderHistory());
+        existingUser.setShoppingCart(user.getShoppingCart());
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        existingUser.setPassword(hashedPassword);
         return this.userRepository.save(user);
     }
 

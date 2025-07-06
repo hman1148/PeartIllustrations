@@ -1,6 +1,6 @@
 replicaCount: 1
 
 image:
-  repository: hman1148/peartillustrations
+  repository: hman1148/peartillustrations/identity-service
   tag: latest
   pullPolicy: IfNotPresent
