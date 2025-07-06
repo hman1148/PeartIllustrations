@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: peart_postgres
+    environment:
+      POSTGRES_DB: admin
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - peart-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: peart_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: hman1148@outlook.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - peart-network
+
+  auth-service:
+    image: hman1148/peartillustrations:latest
+    container_name: peart_auth_service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/admin
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - peart-network
+volumes:
+  pgdata:
+
+networks:
+  peart-network:
+    driver: bridge

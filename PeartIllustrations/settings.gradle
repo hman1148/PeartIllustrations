@@ -1,0 +1,7 @@
+rootProject.name = 'PeartIllustrations'
+include 'ProductService'
+include 'IdentityService'
+include 'Models'
+include 'common-models'
+include 'database'
+

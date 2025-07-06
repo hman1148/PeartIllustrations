@@ -1,0 +1,6 @@
+replicaCount: 1
+
+image:
+  repository: hman1148/peartillustrations
+  tag: latest
+  pullPolicy: IfNotPresent
