@@ -49,9 +49,10 @@ export class UserService {
     return this.http.post<ItemResponse<User>>(url, userRequest);
   }
 
-  getCurrentUser(): Observable<ItemResponse<User>> {
-    const url = this.env.apiUrl() + Apis.Users + UserPages.Me;
-    return this.http.get<ItemResponse<User>>(url);
+  getCurrentUser(token: string): Observable<ItemResponse<User>> {
+    const url = this.env.apiUrl() + Apis.Users + '/me';
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.get<ItemResponse<User>>(url, { headers });
   }
 
   updateUser(
