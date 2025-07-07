@@ -1,7 +1,19 @@
 replicaCount: 1
 image:
-  repository: hman1148/peartillustrations/
+  repository: hman1148/peartillustrations
   tag: latest
 service:
   type: ClusterIP
+  port: 8080
+
+ingress:
+  host: app.local
+  enabled: true
+
+identityService:
+  name: identity-service
+  port: 8080
+
+productService:
+  name: product-service
   port: 8080

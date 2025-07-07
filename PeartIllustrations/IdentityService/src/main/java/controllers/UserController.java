@@ -12,6 +12,7 @@ import services.UserService;
 @Controller
 @RequestMapping("/api/users")
 public class UserController {
+
     @Autowired
     private final UserService userService;
 
@@ -44,6 +45,27 @@ public class UserController {
             return ResponseEntity.ok(new ItemResponse<>(updatedUser, "User updated successfully", true));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ItemResponse<>(null, "Error updating user: " + e.getMessage(), false));
+        }
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<ItemResponse<User>> getUserByToken(@PathVariable Long id) {
+        try {
+            User user = userService.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(new ItemResponse<>(user, "User retrieved successfully", true));
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(new ItemResponse<>(null, "Error retrieving user: " + e.getMessage(), false));
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<ItemResponse<String>> deleteUser(@PathVariable Long id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.ok(new ItemResponse<>("User deleted successfully", "User deleted successfully", true));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ItemResponse<>(null, "Error deleting user: " + e.getMessage(), false));
         }
     }
 }

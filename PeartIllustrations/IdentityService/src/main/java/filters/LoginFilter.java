@@ -22,7 +22,6 @@ import java.util.Optional;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
-
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserService userService;

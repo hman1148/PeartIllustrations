@@ -1,20 +1,19 @@
-# identity-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "identity-service.fullname" . }}
+  name: {{ include "peart-illustrations.fullname" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "identity-service.name" . }}
+      app: {{ include "peart-illustrations.name" . }}
   template:
     metadata:
       labels:
-        app: {{ include "identity-service.name" . }}
+        app: {{ include "peart-illustrations.name" . }}
     spec:
       containers:
-        - name: {{ include "identity-service.name" . }}
+        - name: {{ include "peart-illustrations.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
             - containerPort: {{ .Values.service.port }}

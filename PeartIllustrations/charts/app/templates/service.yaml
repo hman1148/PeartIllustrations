@@ -1,12 +1,13 @@
-# charts/app/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "app.fullname" . }}
+  name: {{ include "peart-illustrations.fullname" . }}
+  labels:
+    app: {{ include "peart-illustrations.name" . }}
 spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.port }}
   selector:
-    app: {{ include "app.name" . }}
+    app: {{ include "peart-illustrations.name" . }}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
