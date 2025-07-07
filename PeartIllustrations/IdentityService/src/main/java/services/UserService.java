@@ -1,22 +1,26 @@
 package services;
 
 import UserRepository.UserRepository;
+import io.jsonwebtoken.Jwt;
 import models.User.User;
 import models.UserRequestResponse.UserCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     public User createUser(UserCreateRequest user) {
@@ -41,11 +45,6 @@ public class UserService {
         return this.userRepository.findById(id);
     }
 
-    public Optional<User> findByUsername(String username) {
-        return this.userRepository.findAll().stream()
-                .filter(user -> user.getUsername().equals(username))
-                .findFirst();
-    }
 
     // Update user details
     public User updateUser(User user) {
@@ -69,4 +68,9 @@ public class UserService {
         this.userRepository.deleteById(id);
     }
 
+    public User getUserFromToken(String token) {
+        String username = this.jwtUtil.extractUsername(token);
+        return this.userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }

@@ -1,5 +1,6 @@
 package services;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,15 +28,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String extractUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -48,5 +40,14 @@ public class JwtUtil {
             logger.error("Invalid JWT token: {}", ex.getMessage());
             return false;
         }
+    }
+
+    public String extractUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 }

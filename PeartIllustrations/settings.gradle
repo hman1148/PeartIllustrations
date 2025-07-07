@@ -4,4 +4,5 @@ include 'IdentityService'
 include 'Models'
 include 'common-models'
 include 'database'
+include 'OrderService'
 

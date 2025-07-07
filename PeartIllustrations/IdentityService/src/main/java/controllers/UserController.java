@@ -48,14 +48,14 @@ public class UserController {
         }
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<ItemResponse<User>> getUserByToken(@PathVariable Long id) {
+    @GetMapping("/me")
+    public ResponseEntity<ItemResponse<User>> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
         try {
-            User user = userService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            return ResponseEntity.ok(new ItemResponse<>(user, "User retrieved successfully", true));
-        } catch (Exception e) {
-            return ResponseEntity.status(404).body(new ItemResponse<>(null, "Error retrieving user: " + e.getMessage(), false));
+            String token = authHeader.replace("Bearer ", "");
+            User user = this.userService.getUserFromToken(token);
+            return ResponseEntity.ok(new ItemResponse<User>(user, "User retrieved successfully", true));
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body(new ItemResponse<>(null, "Error retrieving user: " + ex.getMessage(), false));
         }
     }
 
