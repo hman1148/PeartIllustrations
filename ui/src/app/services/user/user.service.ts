@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Apis, AuthPages, UserPages } from '../../constants/api.constants';
+
+import { ApiPaths, AuthPaths, UserPaths } from '../../constants';
 import { ItemResponse } from '../../models';
 import {
   AuthState,
@@ -34,23 +35,23 @@ export class UserService {
 
   // Auth methods following the clean pattern
   login(loginRequest: LoginRequest): Observable<ItemResponse<User>> {
-    const url = this.env.apiUrl() + Apis.Auth + AuthPages.Login;
+    const url = this.env.apiUrl() + ApiPaths.Auth + AuthPaths.Login;
     return this.http.post<ItemResponse<User>>(url, loginRequest);
   }
 
   logout(): Observable<ItemResponse<string>> {
-    const url = this.env.apiUrl() + Apis.Auth + AuthPages.Logout;
+    const url = this.env.apiUrl() + ApiPaths.Auth + AuthPaths.Logout;
     return this.http.post<ItemResponse<string>>(url, {});
   }
 
   // User management methods following the clean pattern
   createUser(userRequest: UserCreateRequest): Observable<ItemResponse<User>> {
-    const url = this.env.apiUrl() + Apis.Users + UserPages.Create;
+    const url = this.env.apiUrl() + ApiPaths.Users + UserPaths.Create;
     return this.http.post<ItemResponse<User>>(url, userRequest);
   }
 
   getCurrentUser(token: string): Observable<ItemResponse<User>> {
-    const url = this.env.apiUrl() + Apis.Users + '/me';
+    const url = this.env.apiUrl() + ApiPaths.Users + UserPaths.Me;
     const headers = { Authorization: `Bearer ${token}` };
     return this.http.get<ItemResponse<User>>(url, { headers });
   }
@@ -60,13 +61,13 @@ export class UserService {
     userUpdate: Partial<User>,
   ): Observable<ItemResponse<User>> {
     const url =
-      this.env.apiUrl() + Apis.Users + UserPages.Update + '/' + userId;
+      this.env.apiUrl() + ApiPaths.Users + UserPaths.Update + '/' + userId;
     return this.http.put<ItemResponse<User>>(url, userUpdate);
   }
 
   deleteUser(userId: number): Observable<ItemResponse<string>> {
     const url =
-      this.env.apiUrl() + Apis.Users + UserPages.Delete + '/' + userId;
+      this.env.apiUrl() + ApiPaths.Users + UserPaths.Delete + '/' + userId;
     return this.http.delete<ItemResponse<string>>(url);
   }
 

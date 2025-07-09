@@ -1,18 +1,20 @@
 import {
-  initialLoginRequest,
-  initialUser,
+  initialUserCreateRequest,
   LoginRequest,
   User,
+  UserCreateRequest,
 } from '../../models/user.models';
 
 export type UserStoreState = {
   isLoading: boolean;
-  currentUser: User;
-  currentLoginRequest: LoginRequest;
+  currentUser: User | null;
+  currentLoginRequest: LoginRequest | null;
+  currentRegistrationRequest: UserCreateRequest | null;
 };
 
 export const initialUserStoreState = (): UserStoreState => ({
   isLoading: false,
-  currentUser: initialUser(),
-  currentLoginRequest: initialLoginRequest(),
+  currentUser: null,
+  currentLoginRequest: null,
+  currentRegistrationRequest: initialUserCreateRequest(),
 });

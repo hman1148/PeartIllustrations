@@ -27,6 +27,14 @@ export type UserCreateRequest = {
   stripeCustomerId?: string;
 };
 
+export const initialUserCreateRequest = (): UserCreateRequest => ({
+  username: '',
+  password: '',
+  email: '',
+  role: 'USER', // Default role
+  stripeCustomerId: undefined,
+});
+
 // Login related interfaces
 export type LoginRequest = {
   username: string;

@@ -1,17 +1,16 @@
-// API endpoint constants
-export const Apis = {
-  Auth: '/api/auth',
-  Users: '/api/users'
-} as const;
+export enum ApiPaths {
+  Auth = '/api/auth',
+  Users = '/api/users',
+}
 
-export const AuthPages = {
-  Login: '/login',
-  Logout: '/logout'
-} as const;
+export enum AuthPaths {
+  Login = '/login',
+  Logout = '/logout',
+}
 
-export const UserPages = {
-  Me: '/me',
-  Create: '',
-  Update: '', // Will be used with /{id}
-  Delete: '' // Will be used with /{id}
-} as const;
+export enum UserPaths {
+  Me = '/me',
+  Create = '',
+  Update = '',
+  Delete = '',
+}

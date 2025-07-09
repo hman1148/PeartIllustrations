@@ -45,6 +45,7 @@
     "stripe": "^18.3.0",
     "tailwindcss-primeui": "^0.5.1",
     "tslib": "^2.3.0",
+    "vest": "^5.4.6",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

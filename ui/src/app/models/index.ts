@@ -9,6 +9,7 @@ export * from './mail';
 export * from './member';
 export * from './metric';
 export * from './product';
+export * from './registration/registration.model';
 export * from './response/response.model';
 export * from './task';
-export * from './user';
+export * from './user.models';
