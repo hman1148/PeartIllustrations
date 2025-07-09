@@ -1,4 +1,3 @@
-// File: IdentityService/src/test/java/filters/LoginFilterTest.java
 package ControllerTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,12 +15,10 @@ import org.springframework.security.core.Authentication;
 import services.JwtUtil;
 import services.UserService;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
-public class LoginFilterTest {
+public class AuthControllerTest {
 
     private AuthenticationManager authenticationManager;
     private JwtUtil jwtUtil;
@@ -79,7 +76,7 @@ public class LoginFilterTest {
         // Assert
         assertEquals(200, response.getStatus());
         String json = response.getContentAsString();
-        // Optionally, assert JSON contains token and user fields
+
         assert json.contains(token);
         assert json.contains(username);
     }

@@ -48,16 +48,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+    public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authResult)
             throws IOException, ServletException {
 
         try {
             String username = authResult.getName();
             String token = jwtUtil.generateToken(username);
-            Optional<User> user = userService.findByUsername(username);
+            User foundUser = userService.findByUsername(username);
 
-            User foundUser = user.orElseThrow(() -> new RuntimeException("User not found"));
             LoginResponse loginResponse = new LoginResponse(token, foundUser);
 
             ItemResponse<LoginResponse> itemResponse = new ItemResponse<>(loginResponse, "Login successful", true);
