@@ -150,4 +150,38 @@ public class ProductAdminControllerTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Failed to delete shirt"));
     }
+
+    @Test
+    void createBook_shouldReturnUnauthorized_whenInvalidToken() throws Exception {
+        when(jwtUtil.validateToken(validToken)).thenReturn(false);
+
+        String bookJson = "{\"id\":1,\"title\":\"Test Book\"}";
+
+        mockMvc.perform(post("/api/admin/products/books/create")
+                        .header("Authorization", authHeader)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bookJson))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Invalid token"));
+    }
+
+    @Test
+    void createBook_shouldReturnInternalServerError_whenServiceThrowsException() throws Exception {
+        when(jwtUtil.validateToken(validToken)).thenReturn(true);
+        when(userServiceLink.get(anyString(), eq(ItemResponse.class)))
+                .thenReturn(new ItemResponse<>(getMockUser(), "User found", true));
+        when(productService.createAndUpdateProduct(any(Book.class), any(User.class)))
+                .thenThrow(new RuntimeException("Database error"));
+
+        String bookJson = "{\"id\":1,\"title\":\"Test Book\"}";
+
+        mockMvc.perform(post("/api/admin/products/books/create")
+                        .header("Authorization", authHeader)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bookJson))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Internal server error: Database error"));
+    }
 }
