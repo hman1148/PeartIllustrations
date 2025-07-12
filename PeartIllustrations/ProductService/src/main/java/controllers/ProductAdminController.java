@@ -24,10 +24,7 @@ import java.util.List;
 @RequestMapping("/api/admin/products")
 public class ProductAdminController {
 
-    @Autowired
     private final ProductService productService;
-
-    @Autowired
     private final UserServiceLink userServiceLink;
 
     @Autowired

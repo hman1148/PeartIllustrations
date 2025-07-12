@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import models.GenericResponse.ItemsResponse;
 import models.product.Book;
 import models.product.Shirt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +18,8 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final ProductService productService;
+    private final JwtUtil jwtUtil;
 
     public ProductController(ProductService productService, JwtUtil jwtUtil) {
         this.productService = productService;

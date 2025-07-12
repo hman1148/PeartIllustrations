@@ -9,7 +9,7 @@ public class Book extends ProductBase {
     private String publisher;
     private LocalDate publicationDate;
 
-    public Book(String id, String name, String description, double price, String author, String isbn, String publisher, LocalDate publicationDate) {
+    public Book(Long id, String name, String description, double price, String author, String isbn, String publisher, LocalDate publicationDate) {
         super(id, name, description, price);
         this.author = author;
         this.isbn = isbn;
@@ -48,4 +48,6 @@ public class Book extends ProductBase {
     public void setPublicationDate(LocalDate publicationDate) {
         this.publicationDate = publicationDate;
     }
+
+
 }
