@@ -1,6 +1,7 @@
 package ControllerTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import components.JwtUtil;
 import filters.LoginFilter;
 import models.LoginRequestResponse.LoginRequest;
 import models.User.User;
@@ -12,7 +13,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import services.JwtUtil;
 import services.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,6 +1,7 @@
 package filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import components.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,11 +15,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import services.JwtUtil;
 import services.UserService;
 
 import java.io.IOException;
-import java.util.Optional;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 

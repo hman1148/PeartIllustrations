@@ -10,7 +10,7 @@ public abstract class ProductBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
     private String name;
     private String description;
     private double price;
@@ -24,18 +24,18 @@ public abstract class ProductBase {
      * @param price       Price of the product
      */
 
-    public ProductBase(String id, String name, String description, double price) {
+    public ProductBase(Long id, String name, String description, double price) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

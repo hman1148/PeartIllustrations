@@ -1,6 +1,7 @@
 package services;
 
 import UserRepository.UserRepository;
+import components.JwtUtil;
 import io.jsonwebtoken.Jwt;
 import models.User.User;
 import models.UserRequestResponse.UserCreateRequest;

@@ -1,6 +1,6 @@
 package models.GenericResponse;
 
-public class ItemResponse<T> extends Response {
+public class ItemResponse<T> extends Response<T> {
     private T item;
 
     public ItemResponse(T item, String message, boolean success) {

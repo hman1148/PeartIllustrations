@@ -1,6 +1,6 @@
 package models.GenericResponse;
 
-public abstract class Response {
+public abstract class Response<T> {
     private String message;
     private boolean success;
 
