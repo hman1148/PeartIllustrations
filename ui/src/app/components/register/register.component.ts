@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 
-import { signalState } from '@ngrx/signals';
+import { patchState, signalState } from '@ngrx/signals';
 import { UserCreateRequest } from '../../models';
 import { UserStore } from '../../stores/user/user.store';
 import { AppleWidget } from '../auth-extensions/apple-widget/apple-widget';
@@ -39,8 +39,6 @@ export class Register {
   readonly userStore = inject(UserStore);
 
   onSubmit(event: Event) {
-    event.preventDefault();
-
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
 
@@ -52,5 +50,7 @@ export class Register {
     };
 
     this.userStore.register(userCreateRequest);
+
+    patchState(this.state, initialRegisterState());
   }
 }

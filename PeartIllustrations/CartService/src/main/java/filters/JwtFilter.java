@@ -1,4 +1,4 @@
-package services;
+package filters;
 
 import components.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -32,7 +32,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }

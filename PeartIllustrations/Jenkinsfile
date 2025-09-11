@@ -1,0 +1,270 @@
+pipeline {
+    agent any
+
+    environment {
+        JAVA_HOME = tool name: 'JDK-17', type: 'jdk'
+        PATH = "${JAVA_HOME}/bin:${PATH}"
+        GRADLE_OPTS = '-Dorg.gradle.daemon=false'
+        DOCKER_REGISTRY = 'hman1148'
+        KUBECONFIG = credentials('kubeconfig')
+        DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                script {
+                    env.GIT_COMMIT_SHORT = sh(
+                        script: 'git rev-parse --short HEAD',
+                        returnStdout: true
+                    ).trim()
+                    env.IMAGE_TAG = env.GIT_COMMIT_SHORT
+                }
+            }
+        }
+
+        stage('Setup') {
+            steps {
+                sh 'chmod +x gradlew'
+                sh 'chmod +x build.sh'
+                sh 'java -version'
+                sh './gradlew --version'
+            }
+        }
+
+        stage('Clean & Build Dependencies') {
+            steps {
+                sh './gradlew clean'
+                sh './gradlew :common-models:build'
+                sh './gradlew :database:build'
+            }
+        }
+
+        stage('Unit Tests') {
+            parallel {
+                stage('Identity Service Tests') {
+                    steps {
+                        sh './gradlew :IdentityService:test'
+                    }
+                    post {
+                        always {
+                            publishTestResults testResultsPattern: 'IdentityService/build/test-results/test/*.xml'
+                            publishHTML([
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: 'IdentityService/build/reports/tests/test',
+                                reportFiles: 'index.html',
+                                reportName: 'Identity Service Test Report'
+                            ])
+                        }
+                    }
+                }
+
+                stage('Product Service Tests') {
+                    steps {
+                        sh './gradlew :ProductService:test'
+                    }
+                    post {
+                        always {
+                            publishTestResults testResultsPattern: 'ProductService/build/test-results/test/*.xml'
+                            publishHTML([
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: 'ProductService/build/reports/tests/test',
+                                reportFiles: 'index.html',
+                                reportName: 'Product Service Test Report'
+                            ])
+                        }
+                    }
+                }
+
+                stage('Order Service Tests') {
+                    steps {
+                        sh './gradlew :OrderService:test'
+                    }
+                    post {
+                        always {
+                            publishTestResults testResultsPattern: 'OrderService/build/test-results/test/*.xml'
+                            publishHTML([
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: 'OrderService/build/reports/tests/test',
+                                reportFiles: 'index.html',
+                                reportName: 'Order Service Test Report'
+                            ])
+                        }
+                    }
+                }
+
+                stage('Cart Service Tests') {
+                    steps {
+                        sh './gradlew :CartService:test'
+                    }
+                    post {
+                        always {
+                            publishTestResults testResultsPattern: 'CartService/build/test-results/test/*.xml'
+                            publishHTML([
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: 'CartService/build/reports/tests/test',
+                                reportFiles: 'index.html',
+                                reportName: 'Cart Service Test Report'
+                            ])
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                script {
+                    def testResults = sh(
+                        script: './gradlew test --continue',
+                        returnStatus: true
+                    )
+
+                    if (testResults != 0) {
+                        error "Unit tests failed! Build cannot proceed to deployment."
+                    }
+
+                    echo "✅ All unit tests passed successfully!"
+                }
+            }
+        }
+
+        stage('Build Services') {
+            parallel {
+                stage('Build Identity Service') {
+                    steps {
+                        sh './gradlew :IdentityService:build'
+                    }
+                }
+
+                stage('Build Product Service') {
+                    steps {
+                        sh './gradlew :ProductService:build'
+                    }
+                }
+
+                stage('Build Order Service') {
+                    steps {
+                        sh './gradlew :OrderService:build'
+                    }
+                }
+
+                stage('Build Cart Service') {
+                    steps {
+                        sh './gradlew :CartService:build'
+                    }
+                }
+            }
+        }
+
+        stage('Docker Build & Push') {
+                    when {
+                        anyOf {
+                            branch 'master'
+                    branch 'main'
+                    branch 'develop'
+                }
+            }
+            steps {
+                        script {
+                            docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                                sh '''
+                            export IMAGE_TAG=${IMAGE_TAG}
+                            export DOCKER_PUSH=true
+                            ./build.sh
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Dev') {
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'main'
+                }
+            }
+            steps {
+                script {
+                    sh '''
+                        helm upgrade app ./charts/app \
+                            --namespace dev \
+                            --set image.tag=${IMAGE_TAG} \
+                            --install \
+                            --wait \
+                            --timeout=300s
+                    '''
+                }
+            }
+        }
+
+        stage('Smoke Tests') {
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'main'
+                }
+            }
+            steps {
+                script {
+                    // Basic health check after deployment
+                    sleep 30
+                    sh '''
+                        kubectl get pods -n dev
+                        kubectl get services -n dev
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Archive build artifacts
+            archiveArtifacts artifacts: '**/build/libs/*.jar', fingerprint: true, allowEmptyArchive: true
+
+            // Publish consolidated test results
+            publishTestResults testResultsPattern: '**/build/test-results/test/*.xml'
+
+            // Generate and publish coverage reports
+            publishHTML([
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'build/reports/jacoco/test/html',
+                reportFiles: 'index.html',
+                reportName: 'Code Coverage Report'
+            ])
+
+            // Clean workspace
+            cleanWs()
+        }
+
+        success {
+            echo '✅ Build completed successfully!'
+            script {
+                if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'main') {
+                    echo "🚀 Successfully deployed to dev environment with tag: ${env.IMAGE_TAG}"
+                }
+            }
+        }
+
+        failure {
+            echo '❌ Build failed!'
+            script {
+                // You can add Slack/email notifications here
+                echo "Build failed on branch: ${env.BRANCH_NAME}"
+            }
+        }
+    }
+}
