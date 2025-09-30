@@ -69,6 +69,8 @@ public class ProductService {
         return this.shirtRepository.findByTitleContainingIgnoreCase(title);
     }
 
+
+
     /**
      * Retrieves a product by its ID and type.
      *

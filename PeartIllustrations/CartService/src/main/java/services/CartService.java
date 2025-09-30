@@ -59,7 +59,6 @@ public class CartService {
     public void removeProductFromCart(Long userId, Long productId) {
         this.shoppingCartRepository.removeProductFromCart(userId, productId);
     }
-
     /**
      * Finds a shopping cart by the associated user ID.
      *

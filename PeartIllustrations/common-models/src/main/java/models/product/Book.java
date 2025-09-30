@@ -50,4 +50,8 @@ public class Book extends ProductBase {
     }
 
 
+    @Override
+    public String getProductType() {
+        return "Book";
+    }
 }

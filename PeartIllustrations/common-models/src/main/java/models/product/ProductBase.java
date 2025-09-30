@@ -31,6 +31,8 @@ public abstract class ProductBase {
         this.price = price;
     }
 
+    public abstract String getProductType();
+
     public Long getId() {
         return id;
     }

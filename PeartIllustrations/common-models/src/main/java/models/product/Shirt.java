@@ -9,6 +9,11 @@ public class Shirt extends ProductBase {
         super(id, name, description, price);
     }
 
+    @Override
+    public String getProductType() {
+        return "Shirt";
+    }
+
     public String getSize() {
         return size;
     }

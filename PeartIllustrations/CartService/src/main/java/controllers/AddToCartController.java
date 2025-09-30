@@ -14,22 +14,35 @@ import services.ProductService;
 @RequestMapping("/api/cart/add/")
 public class AddToCartController {
 
+    /** Services */
     private final CartService cartService;
     private final ProductService productService;
 
+    /**
+     * Constructor for AddToCartController.
+     *
+     * @param cartService    The service handling cart operations.
+     * @param productService The service handling product operations.
+     */
     public AddToCartController(CartService cartService, ProductService productService) {
         this.cartService = cartService;
         this.productService = productService;
     }
 
+    /**
+     * Adds a product to the cart.
+     *
+     * @param productRequest The request body containing product details and quantity.
+     * @return ResponseEntity with a success message or an error message.
+     */
     @RequestMapping("product/{productId}/quantity/{quantity}")
-    public ResponseEntity<ItemResponse<String>> addToCart(@RequestBody ProductRequest productInfo) {
+    public ResponseEntity<ItemResponse<String>> addToCart(@RequestBody ProductRequest productRequest) {
 
-
-
-        ProductBase foundProduct = this.productService.getProductById(productId);
+        Long productId = productRequest.getProduct().getId();
+        Class<? extends ProductBase> productClass = productRequest.getProduct().getClass();
+        ProductBase foundProduct = this.productService.getProductById(productClass, productId);
         try {
-            this.cartService.addProductToCart(productId, quantity);
+            this.cartService.addProductToCart(productId, foundProduct, productRequest.getQuantity());
             return ResponseEntity.ok(new ItemResponse<>("Item added to cart successfully", "Item added to cart successfully", true));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ItemResponse<>(null, "Error adding item to cart: " + e.getMessage(), false));
