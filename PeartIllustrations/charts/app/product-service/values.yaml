@@ -1,0 +1,6 @@
+replicaCount: 1
+
+image:
+  repository: hman1148/peartillustrations/product-service
+  tag: latest
+  pullPolicy: IfNotPresent
