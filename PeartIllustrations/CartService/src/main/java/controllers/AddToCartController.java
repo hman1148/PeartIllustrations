@@ -5,6 +5,7 @@ import models.product.ProductBase;
 import models.requests.ProductRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import services.CartService;
@@ -35,12 +36,11 @@ public class AddToCartController {
      * @param productRequest The request body containing product details and quantity.
      * @return ResponseEntity with a success message or an error message.
      */
-    @RequestMapping("product/{productId}/quantity/{quantity}")
-    public ResponseEntity<ItemResponse<String>> addToCart(@RequestBody ProductRequest productRequest) {
-
-        Long productId = productRequest.getProduct().getId();
+    @RequestMapping("product/{productId}/")
+    public ResponseEntity<ItemResponse<String>> addToCart(@PathVariable Long productId, @RequestBody ProductRequest productRequest) {
         Class<? extends ProductBase> productClass = productRequest.getProduct().getClass();
         ProductBase foundProduct = this.productService.getProductById(productClass, productId);
+
         try {
             this.cartService.addProductToCart(productId, foundProduct, productRequest.getQuantity());
             return ResponseEntity.ok(new ItemResponse<>("Item added to cart successfully", "Item added to cart successfully", true));

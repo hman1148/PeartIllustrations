@@ -37,7 +37,7 @@ public class AddToCartControllerTest {
         when(productService.getProductById(product.getClass(), 1L)).thenReturn(product);
 
         // Act
-        ResponseEntity<ItemResponse<String>> response = controller.addToCart(request);
+        ResponseEntity<ItemResponse<String>> response = controller.addToCart(1L, request);
 
         // Assert
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
@@ -59,7 +59,7 @@ public class AddToCartControllerTest {
         doThrow(new RuntimeException("Cart error")).when(cartService).addProductToCart(1L, product, 2);
 
         // Act
-        ResponseEntity<ItemResponse<String>> response = controller.addToCart(request);
+        ResponseEntity<ItemResponse<String>> response = controller.addToCart(1L, request);
 
         // Assert
         assertEquals(HttpStatusCode.valueOf(500), response.getStatusCode());
